@@ -41,9 +41,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Order> create(/*@RequestBody @Valid*/ OrderTO request){
-        System.out.println("Passou aqui!");
-        Order order = repo.save(request.createFromTO());
+    public ResponseEntity<Order> create(@RequestBody /*@Valid*/ OrderTO request){
+        Order order = request.createFromTO();
+        repo.save(order);
         producer.send(order);
         return ResponseEntity.created(null).body(order);
     }

@@ -53,31 +53,4 @@ public class Order {
         this.status = ProcessingStatus.PROCESSED;
     }
 
-    public void setName(@NotNull @Size(min = 1) String name2) {
-    }
-
-    public void setDescription(@NotNull @Size(min = 1) String description2) {
-    }
-
-    public void setTotal(@NotNull @PositiveOrZero double total2) {
-    }
-
-    public @NotNull @Size(min = 1) String getName() {
-        return null;
-    }
-
-    public @NotNull @Size(min = 1) String getDescription() {
-        return null;
-    }
-
-    public @NotNull @PositiveOrZero double getTotal() {
-        return 0;
-    }
-
-    public Object getStatus() {
-        return null;
-    }
-
-    public void setId(Long id2) {
-    }
 }

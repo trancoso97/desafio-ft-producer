@@ -30,9 +30,6 @@ public class OrderTO {
     private double total;
     private String status;
 
-    public OrderTO() {
-    }
-
     public Order createFromTO(){
         Order order = new Order();
         order.setName(this.name);
