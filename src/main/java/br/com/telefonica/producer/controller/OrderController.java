@@ -6,7 +6,9 @@ import java.util.NoSuchElementException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.telefonica.producer.model.Order;
-import br.com.telefonica.producer.repository.OrderRepository;
 import br.com.telefonica.producer.service.KafkaProdService;
 import br.com.telefonica.producer.service.OrderService;
 
@@ -27,23 +28,20 @@ import br.com.telefonica.producer.service.OrderService;
 public class OrderController {
 
     @Autowired
-    OrderRepository repo;
-
-    @Autowired
     KafkaProdService producer;
 
-    @Autowired 
+    @Autowired
     OrderService orderService;
     
     @GetMapping
     public ResponseEntity<Iterable<Order>> list(){
-        return ResponseEntity.ok(repo.findAll());
+        return ResponseEntity.ok(orderService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<Order> create(@RequestBody /*@Valid*/ OrderTO request){
+    public ResponseEntity<Order> create(@RequestBody @Valid OrderTO request){
         Order order = request.createFromTO();
-        repo.save(order);
+        orderService.save(order);
         producer.send(order);
         return ResponseEntity.created(null).body(order);
     }
@@ -64,7 +62,7 @@ public class OrderController {
     public ResponseEntity<Order> findById(@PathVariable Long id){
         Order order = null;
         try{
-            order = repo.findById(id).get();
+            order = orderService.findById(id).get();
         }catch(NoSuchElementException nsee){
             return ResponseEntity.notFound().build();
         }
@@ -74,10 +72,10 @@ public class OrderController {
     @PutMapping("/{id}")
     public ResponseEntity<Order> update(@PathVariable Long id, @RequestBody @Valid OrderTO request){
         Order order = request.createFromTO();
-        if(!repo.findById(id).isPresent())
+        if(!orderService.findById(id).isPresent())
             return ResponseEntity.notFound().build();
         order.setId(id);
-        order = repo.save(order);
+        order = orderService.save(order);
         producer.send(order);
         return ResponseEntity.ok(order);
     }
@@ -85,7 +83,7 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Order> delete(@PathVariable Long id){
         try{
-            repo.delete(repo.findById(id).get());
+            orderService.delete(orderService.findById(id).get());
         }catch(NoSuchElementException nsee){
             return ResponseEntity.notFound().build();
         }

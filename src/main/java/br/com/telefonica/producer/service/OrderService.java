@@ -1,23 +1,24 @@
 package br.com.telefonica.producer.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Service;
 
 import br.com.telefonica.producer.model.Order;
 import br.com.telefonica.producer.repository.OrderRepository;
 
 @Service
-public class OrderService {
+public abstract class OrderService implements OrderRepository {
 
     private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     @Autowired
     OrderRepository repo;
-
 
     public List<Order> search(String query, Double minPrice, Double maxPrice){
         if(minPrice==null || minPrice<0) minPrice=0d;
@@ -35,5 +36,4 @@ public class OrderService {
             }
         }
     }
-    
 }
